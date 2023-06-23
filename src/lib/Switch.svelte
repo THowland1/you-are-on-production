@@ -5,7 +5,7 @@
 <label
   class="group block h-5 w-10 relative cursor-pointer rounded-md focus-within:ring-2 ring-offset-slate-700 ring-offset-2 ring-slate-300"
 >
-  <input class="peer sr-only" type="checkbox" bind:checked />
+  <input class="peer sr-only" type="checkbox" {checked} on:change />
   <div
     class="absolute top-1 left-1 bottom-1 right-1 bg-slate-600 rounded-full group-hover:bg-slate-500"
   />

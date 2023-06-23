@@ -10,6 +10,7 @@
   import Switch from "./lib/Switch.svelte";
   import Form from "./lib/Form.svelte";
   import Button from "./lib/Button.svelte";
+  import { slide } from "svelte/transition";
 
   let rules: Rule[] = [
     // {
@@ -52,28 +53,20 @@
   {#if checked}
     <div class="left p-4">
       <div class="text-lg">Rules</div>
-      {#each rules as rule}
-        <div class="flex py-2 items-center justify-between">
-          <div class="w-32 p-2">{rule.type}</div>
-          <div class="flex-1">{rule.value}</div>
-          <div class="flex space-x-2 items-center justify-between">
-            <Button
-              variant="icon"
-              on:click={() =>
-                updateRules(rules.filter((r) => r.id !== rule.id))}
-            >
-              <Trash class="h-4 w-4" />
-            </Button>
-            <Button variant="icon">
-              <Pencil class="h-4 w-4" />
-            </Button>
-            <div><Switch bind:checked={rule.enabled} /></div>
-          </div>
+      {#each rules as rule (rule.id)}
+        <div out:slide>
+          <Form
+            {rule}
+            editing={false}
+            on:cancelClick={() => console.log("cancelClick")}
+            on:deleteClick={() =>
+              updateRules(rules.filter((r) => r.id !== rule.id))}
+            on:editClick={() => console.log("editClick")}
+            on:saveClick={() => console.log("saveClick")}
+            on:toggle={() => console.log("toggle")}
+          />
         </div>
-        <div class="h-[1px] bg-slate-600" />
       {/each}
-      <Form />
-      <Form />
       <div class="h-[1px] bg-slate-600" />
 
       <Button variant="big">Add Rule</Button>
