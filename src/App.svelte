@@ -57,12 +57,17 @@
         <div out:slide>
           <Form
             {rule}
-            editing={false}
             on:cancelClick={() => console.log("cancelClick")}
             on:deleteClick={() =>
               updateRules(rules.filter((r) => r.id !== rule.id))}
             on:editClick={() => console.log("editClick")}
-            on:saveClick={() => console.log("saveClick")}
+            on:saveClick={(r) => {
+              const index = rules.findIndex((r) => r.id === rule.id);
+              if (index > -1) {
+                rules[index] = r.detail.rule;
+              }
+              updateRules(rules);
+            }}
             on:toggle={() => console.log("toggle")}
           />
         </div>

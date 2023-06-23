@@ -1,30 +1,41 @@
 <script lang="ts">
+    import { slide } from "svelte/transition";
     import Button from "./Button.svelte";
     import Switch from "./Switch.svelte";
     import Pencil from "./icons/Pencil.svelte";
     import Trash from "./icons/Trash.svelte";
     import type { Rule } from "./storage";
     export let rule: Rule;
-    export let editing: boolean;
+
+    let form: Rule | null = null;
 
     import { createEventDispatcher } from "svelte";
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{
+        saveClick: {
+            rule: Rule;
+        };
+        deleteClick: void;
+        toggle: { value: boolean };
+    }>();
 
     function onDeleteClick() {
-        dispatch("deleteClick", {});
+        dispatch("deleteClick");
     }
     function onEditClick() {
-        dispatch("editClick", {});
+        form = { ...rule };
     }
-    function onToggle() {
-        dispatch("toggle", {});
+    function onToggle(value: boolean) {
+        dispatch("toggle", { value });
     }
     function onCancelClick() {
-        dispatch("cancelClick", {});
+        form = null;
     }
     function onSaveClick() {
-        dispatch("saveClick", {});
+        if (form) {
+            dispatch("saveClick", { rule: form });
+            form = null;
+        }
     }
 </script>
 
@@ -37,29 +48,29 @@
 -->
 <div class="flex py-3 items-center space-x-2">
     <div class="w-32">
-        {#if editing}
+        {#if form}
             <select
-                value={rule.type}
+                bind:value={form.type}
                 class=" rounded border border-slate-500 hover:border-slate-400 bg-transparent p-1 h-8 focus-visible:ring-2 ring-offset-slate-700 ring-offset-1 ring-slate-300"
             >
-                <option value="startsWith">Starts with</option>
+                <option value="starts with">starts with</option>
             </select>
         {:else}
-            <div>
+            <div class="p-2">
                 {rule.type}
             </div>
         {/if}
     </div>
 
     <div class="flex-1">
-        {#if editing}
+        {#if form}
             <input
                 class="rounded border border-slate-500 hover:border-slate-400 bg-slate-700 p-1 h-8 focus-visible:ring-2 ring-offset-slate-700 ring-offset-1 ring-slate-300"
                 type="text"
-                value={rule.value}
+                bind:value={form.value}
             />
         {:else}
-            <div>
+            <div class="p-1 border border-transparent">
                 {rule.value}
             </div>
         {/if}
@@ -72,12 +83,17 @@
         <Button variant="icon" on:click={onEditClick}>
             <Pencil class="h-4 w-4" />
         </Button>
-        <div><Switch checked={rule.enabled} on:change={onToggle} /></div>
+        <div>
+            <Switch
+                checked={rule.enabled}
+                on:checkedChange={(e) => onToggle(e.detail.value)}
+            />
+        </div>
     </div>
 </div>
 
-{#if editing}
-    <div class="flex items-center justify-end space-x-3">
+{#if form}
+    <div transition:slide class="flex items-center justify-end space-x-3 pb-3">
         <Button on:click={onCancelClick}>Cancel</Button>
         <Button on:click={onSaveClick}>Save</Button>
     </div>
