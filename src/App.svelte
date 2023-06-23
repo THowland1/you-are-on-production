@@ -12,32 +12,36 @@
   import Button from "./lib/Button.svelte";
 
   let rules: Rule[] = [
-    {
-      id: new Date().toISOString(),
-      enabled: true,
-      type: "starts with",
-      value: "Hello",
-    },
-    {
-      id: new Date().toISOString(),
-      enabled: true,
-      type: "starts with",
-      value: "Bello",
-    },
+    // {
+    //   id: new Date().toISOString(),
+    //   enabled: true,
+    //   type: "starts with",
+    //   value: "Hello",
+    // },
+    // {
+    //   id: new Date().toISOString(),
+    //   enabled: true,
+    //   type: "starts with",
+    //   value: "Bello",
+    // },
   ];
   let width = "600px";
   onMount(async () => {
     rules = await getRules();
-    await setRules([
-      ...rules,
-      {
-        id: new Date().toISOString(),
-        enabled: true,
-        type: "starts with",
-        value: "deszf",
-      },
-    ]);
+    // await setRules([
+    //   ...rules,
+    //   {
+    //     id: new Date().toISOString(),
+    //     enabled: true,
+    //     type: "starts with",
+    //     value: "deszf",
+    //   },
+    // ]);
   });
+  async function updateRules(new_rules: Rule[]) {
+    rules = new_rules;
+    await setRules(new_rules);
+  }
   let checked = true;
   $: {
     // setRules(rules);
@@ -53,7 +57,11 @@
           <div class="w-32 p-2">{rule.type}</div>
           <div class="flex-1">{rule.value}</div>
           <div class="flex space-x-2 items-center justify-between">
-            <Button variant="icon">
+            <Button
+              variant="icon"
+              on:click={() =>
+                updateRules(rules.filter((r) => r.id !== rule.id))}
+            >
               <Trash class="h-4 w-4" />
             </Button>
             <Button variant="icon">
