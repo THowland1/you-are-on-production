@@ -68,7 +68,13 @@
               }
               updateRules(rules);
             }}
-            on:toggle={() => console.log("toggle")}
+            on:toggle={(r) => {
+              const index = rules.findIndex((r) => r.id === rule.id);
+              if (index > -1) {
+                rules[index].enabled = r.detail.value;
+              }
+              updateRules(rules);
+            }}
           />
         </div>
       {/each}
