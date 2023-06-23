@@ -3,41 +3,110 @@
   import viteLogo from "/vite.svg";
   import Counter from "./lib/Counter.svelte";
   import { onMount } from "svelte";
-  import { getWebsites } from "./lib/storage";
+  import { getRules, setRules, type Rule } from "./lib/storage";
+  import "./app.css";
+  import Trash from "./lib/icons/Trash.svelte";
+  import Pencil from "./lib/icons/Pencil.svelte";
+  import Switch from "./lib/Switch.svelte";
+  import Form from "./lib/Form.svelte";
+  import Button from "./lib/Button.svelte";
 
-  let websites: string;
+  let rules: Rule[] = [
+    {
+      id: new Date().toISOString(),
+      enabled: true,
+      type: "starts with",
+      value: "Hello",
+    },
+    {
+      id: new Date().toISOString(),
+      enabled: true,
+      type: "starts with",
+      value: "Bello",
+    },
+  ];
+  let width = "600px";
   onMount(async () => {
-    websites = await getWebsites();
+    rules = await getRules();
+    await setRules([
+      ...rules,
+      {
+        id: new Date().toISOString(),
+        enabled: true,
+        type: "starts with",
+        value: "deszf",
+      },
+    ]);
   });
+  let checked = true;
+  $: {
+    // setRules(rules);
+  }
 </script>
 
-<main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Sveltee</h1>
-  {websites}
-  <div class="card">
-    <Counter />
-  </div>
+<div class="all bg-slate-900 text-slate-200">
+  {#if checked}
+    <div class="left p-4">
+      <div class="text-lg">Rules</div>
+      {#each rules as rule}
+        <div class="flex py-2 items-center justify-between">
+          <div class="w-32 p-2">{rule.type}</div>
+          <div class="flex-1">{rule.value}</div>
+          <div class="flex space-x-2 items-center justify-between">
+            <Button variant="icon">
+              <Trash class="h-4 w-4" />
+            </Button>
+            <Button variant="icon">
+              <Pencil class="h-4 w-4" />
+            </Button>
+            <div><Switch bind:checked={rule.enabled} /></div>
+          </div>
+        </div>
+        <div class="h-[1px] bg-slate-600" />
+      {/each}
+      <Form />
+      <Form />
+      <div class="h-[1px] bg-slate-600" />
 
-  <p>
-    Check out <a
-      href="https://github.com/sveltejs/kit#readme"
-      target="_blank"
-      rel="noreferrer">SvelteKit</a
-    >, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">Click on the Vite and Svelte logos to learn more</p>
-</main>
+      <Button variant="big">Add Rule</Button>
+    </div>
+  {/if}
+  <main class="right">
+    <label for="">
+      <input type="checkbox" bind:checked />
+      Hello
+    </label>
+    <div class="text-4xl">BIG ICON</div>
+    <div>You are not on production</div>
+  </main>
+</div>
 
 <style>
+  :global(body) {
+    /* width: 800px; */
+    width: fit-content;
+    --blue-grey-50: #f8fafc;
+    --blue-grey-100: #f1f5f9;
+    --blue-grey-200: #e2e8f0;
+    --blue-grey-300: #cbd5e1;
+    --blue-grey-400: #94a3b8;
+    --blue-grey-500: #64748b;
+    --blue-grey-600: #475569;
+    --blue-grey-700: #334155;
+    --blue-grey-800: #1e293b;
+    --blue-grey-900: #0f172a;
+    background-color: var(--blue-grey-800);
+  }
+  .all {
+    display: flex;
+  }
+  .left {
+    width: 600px;
+    background-color: var(--blue-grey-700);
+  }
+  .right {
+    width: 200px;
+  }
   .logo {
     height: 6em;
     padding: 1.5em;
