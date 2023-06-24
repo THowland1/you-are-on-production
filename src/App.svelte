@@ -4,13 +4,15 @@
   import "./app.css";
   import Button from "./lib/Button.svelte";
   import Form from "./lib/Form.svelte";
-  import { getRules, setRules, type Rule } from "./lib/storage";
+  import { getRules, setRules, type Rule, getUrl } from "./lib/storage";
 
   let rules: Rule[] = [];
   let width = "600px";
   let has_mounted = false;
+  let url: URL | null = null;
   onMount(async () => {
     rules = await getRules();
+    url = await getUrl();
     has_mounted = true;
   });
   async function updateRules(new_rules: Rule[]) {
@@ -72,6 +74,7 @@
     </label>
     <div class="text-4xl">BIG ICON</div>
     <div>You are not on production</div>
+    <div>{url?.toString()}</div>
   </main>
 </div>
 
@@ -95,11 +98,11 @@
     display: flex;
   }
   .left {
-    width: 600px;
+    width: 500px;
     background-color: var(--blue-grey-700);
   }
   .right {
-    width: 200px;
+    width: 300px;
   }
   .logo {
     height: 6em;
