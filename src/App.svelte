@@ -5,6 +5,9 @@
   import Button from "./lib/Button.svelte";
   import Form from "./lib/Form.svelte";
   import { getRules, setRules, type Rule, getUrl } from "./lib/storage";
+  import { isOnProduction } from "./lib/is-on-production";
+  import OnProductionIcon from "./lib/icons/OnProductionIcon.svelte";
+  import NotOnProductionIcon from "./lib/icons/NotOnProductionIcon.svelte";
 
   let rules: Rule[] = [];
   let width = "600px";
@@ -64,17 +67,39 @@
             }}
           />
         </div>
+      {:else}
+        <div class="text-center p-8 text-slate-400 text-sm italic">
+          You have no rules set up yet
+        </div>
       {/each}
     </div>
   {/if}
   <main class="right">
-    <label for="">
-      <input type="checkbox" bind:checked />
-      Hello
-    </label>
-    <div class="text-4xl">BIG ICON</div>
-    <div>You are not on production</div>
+    <div class="text-xl font-bold flex flex-col justify-center items-center">
+      {#if url && isOnProduction(url, rules)}
+        <OnProductionIcon class="w-32 text-orange-500 py-8" />
+        <div>You are on production</div>
+      {:else}
+        <NotOnProductionIcon class="w-32 text-slate-700 py-8" />
+        <div>You are not on production</div>
+      {/if}
+    </div>
     <div>{url?.toString()}</div>
+    <div class="p-4">
+      {#if checked}
+        <Button
+          variant="big"
+          class="block w-full p-2"
+          on:click={() => (checked = false)}>Hide rules</Button
+        >
+      {:else}
+        <Button
+          variant="big"
+          class="block w-full p-2"
+          on:click={() => (checked = true)}>View rules</Button
+        >
+      {/if}
+    </div>
   </main>
 </div>
 
