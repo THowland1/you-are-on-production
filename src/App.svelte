@@ -1,60 +1,45 @@
 <script lang="ts">
-  import svelteLogo from "./assets/svelte.svg";
-  import viteLogo from "/vite.svg";
-  import Counter from "./lib/Counter.svelte";
   import { onMount } from "svelte";
-  import { getRules, setRules, type Rule } from "./lib/storage";
-  import "./app.css";
-  import Trash from "./lib/icons/Trash.svelte";
-  import Pencil from "./lib/icons/Pencil.svelte";
-  import Switch from "./lib/Switch.svelte";
-  import Form from "./lib/Form.svelte";
-  import Button from "./lib/Button.svelte";
   import { slide } from "svelte/transition";
+  import "./app.css";
+  import Button from "./lib/Button.svelte";
+  import Form from "./lib/Form.svelte";
+  import { getRules, setRules, type Rule } from "./lib/storage";
 
-  let rules: Rule[] = [
-    // {
-    //   id: new Date().toISOString(),
-    //   enabled: true,
-    //   type: "starts with",
-    //   value: "Hello",
-    // },
-    // {
-    //   id: new Date().toISOString(),
-    //   enabled: true,
-    //   type: "starts with",
-    //   value: "Bello",
-    // },
-  ];
+  let rules: Rule[] = [];
   let width = "600px";
+  let has_mounted = false;
   onMount(async () => {
     rules = await getRules();
-    // await setRules([
-    //   ...rules,
-    //   {
-    //     id: new Date().toISOString(),
-    //     enabled: true,
-    //     type: "starts with",
-    //     value: "deszf",
-    //   },
-    // ]);
+    has_mounted = true;
   });
   async function updateRules(new_rules: Rule[]) {
     rules = new_rules;
     await setRules(new_rules);
   }
   let checked = true;
-  $: {
-    // setRules(rules);
-  }
 </script>
 
 <div class="all bg-slate-900 text-slate-200">
   {#if checked}
-    <div class="left p-4">
-      <div class="text-lg">Rules</div>
+    <div class="left">
+      <div class="flex justify-between items-center py-2 pl-4 pr-2">
+        <div class="text-lg">Rules</div>
+        <Button
+          variant="big"
+          on:click={() => {
+            rules.push({
+              id: new Date().toISOString(),
+              enabled: true,
+              type: "starts with",
+              value: window.location.origin,
+            });
+            updateRules(rules);
+          }}>Add Rule</Button
+        >
+      </div>
       {#each rules as rule (rule.id)}
-        <div out:slide>
+        <div transition:slide={{ duration: has_mounted ? 300 : 0 }}>
           <Form
             {rule}
             on:cancelClick={() => console.log("cancelClick")}
@@ -78,9 +63,6 @@
           />
         </div>
       {/each}
-      <div class="h-[1px] bg-slate-600" />
-
-      <Button variant="big">Add Rule</Button>
     </div>
   {/if}
   <main class="right">
