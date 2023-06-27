@@ -8,14 +8,17 @@
   import { isOnProduction } from "./lib/is-on-production";
   import OnProductionIcon from "./lib/icons/OnProductionIcon.svelte";
   import NotOnProductionIcon from "./lib/icons/NotOnProductionIcon.svelte";
+  import { getDomain } from "./lib/get-domain";
 
   let rules: Rule[] = [];
   let width = "600px";
   let has_mounted = false;
   let url: URL | null = null;
   onMount(async () => {
+    url = new URL("https://www.npmjs.com/package/tailwind-merge");
     rules = await getRules();
     url = await getUrl();
+
     has_mounted = true;
   });
   async function updateRules(new_rules: Rule[]) {
@@ -36,8 +39,9 @@
             rules.push({
               id: new Date().toISOString(),
               enabled: true,
-              type: "starts with",
-              value: window.location.origin,
+              part: "domain",
+              type: "equals",
+              value: url ? getDomain(url) : "",
             });
             updateRules(rules);
           }}>Add Rule</Button
@@ -84,7 +88,33 @@
         <div>You are not on production</div>
       {/if}
     </div>
-    <div>{url?.toString()}</div>
+    {#if url}
+      <div class="m-4 p-1 text-xs">
+        <div>
+          <span class="text-slate-400 w-16 inline-block">protocol</span
+          >{url.protocol}
+        </div>
+        <div>
+          <span class="text-slate-400 w-16 inline-block">domain</span
+          >{getDomain(url)}
+        </div>
+        <div>
+          <span class="text-slate-400 w-16 inline-block">host</span>{url.host}
+        </div>
+        <div>
+          <span class="text-slate-400 w-16 inline-block">hostname</span
+          >{url.hostname}
+        </div>
+        <div>
+          <span class="text-slate-400 w-16 inline-block">origin</span
+          >{url.origin}
+        </div>
+        <div>
+          <span class="text-slate-400 w-16 inline-block">pathname</span
+          >{url.pathname}
+        </div>
+      </div>
+    {/if}
     <div class="p-4">
       {#if checked}
         <Button

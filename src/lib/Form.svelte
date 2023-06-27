@@ -4,7 +4,7 @@
     import Switch from "./Switch.svelte";
     import Pencil from "./icons/Pencil.svelte";
     import Trash from "./icons/Trash.svelte";
-    import type { Rule } from "./storage";
+    import { TYPE_OPTIONS, type Rule, PART_OPTIONS } from "./storage";
     export let rule: Rule;
 
     let form: Rule | null = null;
@@ -39,14 +39,6 @@
     }
 </script>
 
-<!-- 
-<div class="flex py-2 items-center justify-between">
-    <div class="w-32 p-2">{rule.type}</div>
-    <div class="flex-1">{rule.value}</div>
- 
-  </div>
--->
-
 <form
     on:submit={(e) => {
         e.preventDefault();
@@ -56,13 +48,31 @@
 >
     <div class="h-[1px] bg-slate-600" />
     <div class="flex py-1 items-center space-x-2 group text-xs h-8">
+        <div class="w-24">
+            {#if form}
+                <select
+                    bind:value={form.part}
+                    class="w-full rounded border border-slate-500 hover:border-slate-400 bg-transparent px-1 h-6 focus-visible:ring-2 ring-offset-slate-700 ring-offset-1 ring-slate-300"
+                >
+                    {#each PART_OPTIONS as option}
+                        <option value={option}>{option}</option>
+                    {/each}
+                </select>
+            {:else}
+                <div class="px-2">
+                    {rule.part}
+                </div>
+            {/if}
+        </div>
         <div class="w-32">
             {#if form}
                 <select
                     bind:value={form.type}
                     class="w-full rounded border border-slate-500 hover:border-slate-400 bg-transparent px-1 h-6 focus-visible:ring-2 ring-offset-slate-700 ring-offset-1 ring-slate-300"
                 >
-                    <option value="starts with">starts with</option>
+                    {#each TYPE_OPTIONS as option}
+                        <option value={option}>{option}</option>
+                    {/each}
                 </select>
             {:else}
                 <div class="px-2">

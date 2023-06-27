@@ -1,8 +1,12 @@
 import { z } from "zod";
 
+
+export const PART_OPTIONS = ['protocol', 'domain', 'host', 'hostname', 'origin', 'pathname'] as const;
+export const TYPE_OPTIONS = ['equals', 'starts with', 'ends with', 'matches (regex)'] as const;
 const RuleSchema = z.object({
     id: z.string(),
-    type: z.enum(['starts with']),
+    part: z.enum(PART_OPTIONS),
+    type: z.enum(TYPE_OPTIONS),
     value: z.string(),
     enabled: z.boolean()
 })
